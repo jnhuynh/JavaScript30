@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+<script>
+  // `data-` prefixed attributes is HTML spec's way of allowing people to
+  // create their own custom attributes on HTML tags.
+  window.addEventListener('keydown', playSound);
+
+
+  // There is also an `animationend` event
+  const keys = document.querySelectorAll('.key');
+  keys.forEach(key => key.addEventListener('transitionend', animateFadeOutKeyPress));
+
+  function playSound(e) {
+    // `e` is an event data object
+    playAudioForKeyCode(e.keyCode);
+    animateFadeInKeyPress(e.keyCode);
+  }
+
+  function playAudioForKeyCode(keyCode) {
+    const audio = document.querySelector(`audio[data-key='${keyCode}']`);
+    if (!audio) return;
+
+    // rewind to start so we can spam audio
+    audio.currentTime = 0;
+    // `play` will only play if it isn't already playing
+    audio.play();
+  }
+
+  function animateFadeInKeyPress(keyCode) {
+    const key = document.querySelector(`div[data-key='${keyCode}'`);
+    if (!key) return;
+
+    // Vanilla JS methods for class manipulation
+    key.classList.add('playing');
+    // key.classList.remove('playing');
+    // key.classList.toggle('playing');
+    // Below code could work, but requires syncing of CSS and JS timeout values:
+    // setTimeout(function() { }, 0.07);
+  }
+
+  function animateFadeOutKeyPress(e) {
+    // Skip if not transform transition
+    if (e.propertyName !== 'transform') return;
+
+    // `this` is bound to the dom element that triggered the event
+    this.classList.remove('playing');
+  }
+</script>
+
+
+</body>
+</html>
